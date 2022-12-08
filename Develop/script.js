@@ -8,10 +8,16 @@ var numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 var characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
 
 // Password criteria
+var passwordLength = 0;
 var includeLowercase = false;
 var includeUppercase = false;
 var includeNumbers = false;
 var includeCharacters = false;
+var lengthError = false;
+var cancelState = false;
+
+// Generated password characters
+var passwordArray = [];
 
 // Random-number generator
 function roll(max) {
@@ -35,7 +41,34 @@ function typeSelector() {
         return typeSelector();
     }
 }
-  
+
+// Password generator
+function generatePassword() {
+    chooseCriteria();
+    let generateScreen = false;
+    if (!includeCharacters && !includeLowercase && !includeNumbers && !includeUppercase && !lengthError && !cancelState) {
+      window.alert("Type selection error. Please choose at least one character type.");
+      return;
+    } else if (lengthError) {
+      window.alert("Invalid length input. Password length must be 8 to 128 characters.");
+      return;
+    } else if (cancelState) {
+      window.alert("Password generation cancelled.");
+      return;
+    } else {
+      generateScreen = window.confirm("Password ready. Proceed?");
+    }
+    if (!generateScreen) {
+      window.alert("Password generation cancelled.");
+      return;
+    } else {
+      for (var i = 0; i < passwordLength; i++) {
+        passwordArray.push(typeSelector());
+      }
+      console.log("Password:", passwordArray.join(''));
+      return passwordArray.join('');
+    }
+}
 
 // Write password to the #password input, resets values.
 function writePassword() {
