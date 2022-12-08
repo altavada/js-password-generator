@@ -7,6 +7,11 @@ var uppercase = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"
 var numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 var characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
 
+// Random-number generator
+function roll(max) {
+    return Math.floor(Math.random() * max);
+}
+
 // Write password to the #password input, resets values.
 function writePassword() {
     passwordArray = [];
