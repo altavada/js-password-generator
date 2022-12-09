@@ -9,12 +9,8 @@ var characters = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
 
 // Password criteria
 var passwordLength = 0;
-var includeLowercase = false;
-var includeUppercase = false;
-var includeNumbers = false;
-var includeCharacters = false;  
-var lengthError = false;
-var cancelState = false;
+var criteria = [false, false, false, false];
+var errorState = [false, false, false];
 
 // Generated password characters
 var passwordArray = [];
@@ -25,93 +21,104 @@ function roll(max) {
 }
 
 // Character randomizer
-function typeSelector() {
+function randomKey() {
   let characterType = roll(4);
-  if (!includeLowercase && !includeUppercase && !includeNumbers && !includeCharacters) {
+  console.log("Roll check:", characterType);
+  if (errorState[0]) {
       return ("Type selection error.");
-    } else if (characterType == 0 && includeLowercase) {
+    } else if (characterType == 0 && criteria[0]) {
+      console.log("Passed. Lowercase letter:");
       return lowercase[roll(26)];
-    } else if (characterType == 1 && includeUppercase) {
+    } else if (characterType == 1 && criteria[1]) {
+      console.log("Passed. Uppercase letter:");
       return uppercase[roll(26)];
-    } else if (characterType == 2 && includeNumbers) {
+    } else if (characterType == 2 && criteria[2]) {
+      console.log("Passed. Number:");
       return numbers[roll(10)];
-    } else if (characterType == 3 && includeCharacters) {
+    } else if (characterType == 3 && criteria[3]) {
+      console.log("Passed. Special character:");
       return characters[roll(10)];
     } else {
-      return typeSelector();
+      return randomKey();
   }
 }
 
 // Criteria selector
 function chooseCriteria() {
   passwordLength = window.prompt("Choose a password length from 8 to 128 characters:");
-  console.log("Password length:", passwordLength);
   let lowercaseScreen = false;
   if (passwordLength === null) {
-    lengthError = false;
-    cancelState = true;
+    errorState = [false, false, true];
+    console.log("User cancelled.");
     return;
   } else if (passwordLength >= 8 && passwordLength <= 128) {
-    lengthError = false;
-    cancelState = false;
-    lowercaseScreen = window.confirm("Include lowercase characters?");
+    errorState = [false, false, false];
+    console.log("Password length:", passwordLength);
+    lowercaseScreen = window.confirm("Include lowercase characters? Hit CANCEL to exclude.");
   } else {
-    lengthError = true;
-    cancelState = false;
+    errorState = [false, true, false];
+    console.log("Invalid input.");
     return;
   }
   if (lowercaseScreen) {
-    includeLowercase = true;
+    criteria[0] = true;
   } else {
-    includeLowercase = false;
+    criteria[0] = false;
   }
-  console.log("Include lowercase:", includeLowercase);
-  let uppercaseScreen = window.confirm("Include uppercase characters?");
+  console.log("Include lowercase:", criteria[0]);
+  let uppercaseScreen = window.confirm("Include uppercase characters? Hit CANCEL to exclude.");
   if (uppercaseScreen) {
-    includeUppercase = true;
+    criteria[1] = true;
   } else {
-    includeUppercase = false;
+    criteria[1] = false;
   }
-  console.log("Include uppercase:", includeUppercase);
-  let numberScreen = window.confirm("Include numbers?");
+  console.log("Include uppercase:", criteria[1]);
+  let numberScreen = window.confirm("Include numbers? Hit CANCEL to exclude.");
   if (numberScreen) {
-    includeNumbers = true;
+    criteria[2] = true;
   } else {
-    includeNumbers = false;
+    criteria[2] = false;
   }
-  console.log("Include numbers:", includeNumbers);
-  let characterScreen = window.confirm("Include special characters?");
+  console.log("Include numbers:", criteria[2]);
+  let characterScreen = window.confirm("Include special characters? Hit CANCEL to exclude.");
   if (characterScreen) {
-    includeCharacters = true;
+    criteria[3] = true;
   } else {
-    includeCharacters = false;
+    criteria[3] = false;
   }
-  console.log("Include special characters:", includeCharacters);
+  console.log("Include special characters:", criteria[3]);
+  if (!criteria[0] && !criteria[1] && !criteria[2] && !criteria[3]) {
+    errorState[0] = true;
+    console.log("Selection error.");
+  } else {
+    errorState[0] = false;
+  }
 }
-
 
 // Password generator
 function generatePassword() {
   chooseCriteria();
   let generateScreen = false;
-  if (!includeCharacters && !includeLowercase && !includeNumbers && !includeUppercase && !lengthError && !cancelState) {
+  if (errorState[0]) {
     window.alert("Type selection error. Please choose at least one character type.");
     return;
-  } else if (lengthError) {
+  } else if (errorState[1]) {
     window.alert("Invalid length input. Password length must be 8 to 128 characters.");
     return;
-  } else if (cancelState) {
+  } else if (errorState[2]) {
     window.alert("Password generation cancelled.");
     return;
   } else {
     generateScreen = window.confirm("Password ready. Proceed?");
   }
   if (!generateScreen) {
+    console.log("User cancelled.");
     window.alert("Password generation cancelled.");
     return;
   } else {
     for (var i = 0; i < passwordLength; i++) {
-    passwordArray.push(typeSelector());
+      passwordArray.push(randomKey());
+      console.log(passwordArray[i]);
     }
     console.log("Password:", passwordArray.join(''));
     return passwordArray.join('');
@@ -124,6 +131,7 @@ function writePassword() {
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
   passwordText.value = password;
+  console.log("END OF PROGRAM. READY TO CREATE NEW PASSWORD.");
 }
   
 // Add event listener to generate button
