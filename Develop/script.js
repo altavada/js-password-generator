@@ -54,7 +54,7 @@ function chooseCriteria() {
   } else if (passwordLength >= 8 && passwordLength <= 128) {
     errorState = [false, false, false];
     console.log("Password length:", passwordLength);
-    lowercaseScreen = window.confirm("Include lowercase characters?");
+    lowercaseScreen = window.confirm("Include lowercase characters? Hit CANCEL to exclude.");
   } else {
     errorState = [false, true, false];
     console.log("Invalid input.");
@@ -66,21 +66,21 @@ function chooseCriteria() {
     criteria[0] = false;
   }
   console.log("Include lowercase:", criteria[0]);
-  let uppercaseScreen = window.confirm("Include uppercase characters?");
+  let uppercaseScreen = window.confirm("Include uppercase characters? Hit CANCEL to exclude.");
   if (uppercaseScreen) {
     criteria[1] = true;
   } else {
     criteria[1] = false;
   }
   console.log("Include uppercase:", criteria[1]);
-  let numberScreen = window.confirm("Include numbers?");
+  let numberScreen = window.confirm("Include numbers? Hit CANCEL to exclude.");
   if (numberScreen) {
     criteria[2] = true;
   } else {
     criteria[2] = false;
   }
   console.log("Include numbers:", criteria[2]);
-  let characterScreen = window.confirm("Include special characters?");
+  let characterScreen = window.confirm("Include special characters? Hit CANCEL to exclude.");
   if (characterScreen) {
     criteria[3] = true;
   } else {
@@ -112,12 +112,13 @@ function generatePassword() {
     generateScreen = window.confirm("Password ready. Proceed?");
   }
   if (!generateScreen) {
+    console.log("User cancelled.");
     window.alert("Password generation cancelled.");
     return;
   } else {
     for (var i = 0; i < passwordLength; i++) {
-    passwordArray.push(randomKey());
-    console.log(passwordArray[i]);
+      passwordArray.push(randomKey());
+      console.log(passwordArray[i]);
     }
     console.log("Password:", passwordArray.join(''));
     return passwordArray.join('');
@@ -130,7 +131,7 @@ function writePassword() {
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
   passwordText.value = password;
-  console.log("END OF PROGRAM. READY FOR NEW PASSWORD.");
+  console.log("END OF PROGRAM. READY TO CREATE NEW PASSWORD.");
 }
   
 // Add event listener to generate button
