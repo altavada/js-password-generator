@@ -21,20 +21,25 @@ function roll(max) {
 }
 
 // Character randomizer
-function typeSelector() {
+function randomKey() {
   let characterType = roll(4);
-  if (errorState[3]) {
+  console.log("Roll check:", characterType);
+  if (errorState[0]) {
       return ("Type selection error.");
     } else if (characterType == 0 && criteria[0]) {
+      console.log("Passed. Lowercase letter:");
       return lowercase[roll(26)];
     } else if (characterType == 1 && criteria[1]) {
+      console.log("Passed. Uppercase letter:");
       return uppercase[roll(26)];
     } else if (characterType == 2 && criteria[2]) {
+      console.log("Passed. Number:");
       return numbers[roll(10)];
     } else if (characterType == 3 && criteria[3]) {
+      console.log("Passed. Special character:");
       return characters[roll(10)];
     } else {
-      return typeSelector();
+      return randomKey();
   }
 }
 
@@ -43,14 +48,16 @@ function chooseCriteria() {
   passwordLength = window.prompt("Choose a password length from 8 to 128 characters:");
   let lowercaseScreen = false;
   if (passwordLength === null) {
-    errorState = [false, true];
+    errorState = [false, false, true];
+    console.log("User cancelled.");
     return;
   } else if (passwordLength >= 8 && passwordLength <= 128) {
-    errorState = [false, false];
+    errorState = [false, false, false];
     console.log("Password length:", passwordLength);
     lowercaseScreen = window.confirm("Include lowercase characters?");
   } else {
-    errorState = [true, false];
+    errorState = [false, true, false];
+    console.log("Invalid input.");
     return;
   }
   if (lowercaseScreen) {
@@ -81,24 +88,24 @@ function chooseCriteria() {
   }
   console.log("Include special characters:", criteria[3]);
   if (!criteria[0] && !criteria[1] && !criteria[2] && !criteria[3]) {
-    errorState[2] = true;
+    errorState[0] = true;
+    console.log("Selection error.");
   } else {
-    errorState[2] = false;
+    errorState[0] = false;
   }
-  console.log("Type selection error:", errorState[2]);
 }
 
 // Password generator
 function generatePassword() {
   chooseCriteria();
   let generateScreen = false;
-  if (errorState[2]) {
+  if (errorState[0]) {
     window.alert("Type selection error. Please choose at least one character type.");
     return;
-  } else if (errorState[0]) {
+  } else if (errorState[1]) {
     window.alert("Invalid length input. Password length must be 8 to 128 characters.");
     return;
-  } else if (errorState[1]) {
+  } else if (errorState[2]) {
     window.alert("Password generation cancelled.");
     return;
   } else {
@@ -109,7 +116,8 @@ function generatePassword() {
     return;
   } else {
     for (var i = 0; i < passwordLength; i++) {
-    passwordArray.push(typeSelector());
+    passwordArray.push(randomKey());
+    console.log(passwordArray[i]);
     }
     console.log("Password:", passwordArray.join(''));
     return passwordArray.join('');
@@ -122,6 +130,7 @@ function writePassword() {
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
   passwordText.value = password;
+  console.log("END OF PROGRAM. READY FOR NEW PASSWORD.");
 }
   
 // Add event listener to generate button
