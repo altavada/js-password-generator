@@ -20,15 +20,6 @@ function roll(max) {
     return Math.floor(Math.random() * max);
 }
 
-// Error checker
-function checkCriteria() {
-  if (!criteria[0] && !criteria[1] && !criteria[2] && !criteria[3]) {
-    errorState[2] = true;
-  } else {
-    errorState[2] = false;
-  }
-}
-
 // Character randomizer
 function typeSelector() {
   let characterType = roll(4);
@@ -50,13 +41,13 @@ function typeSelector() {
 // Criteria selector
 function chooseCriteria() {
   passwordLength = window.prompt("Choose a password length from 8 to 128 characters:");
-  console.log("Password length:", passwordLength);
   let lowercaseScreen = false;
   if (passwordLength === null) {
     errorState = [false, true];
     return;
   } else if (passwordLength >= 8 && passwordLength <= 128) {
     errorState = [false, false];
+    console.log("Password length:", passwordLength);
     lowercaseScreen = window.confirm("Include lowercase characters?");
   } else {
     errorState = [true, false];
@@ -89,7 +80,11 @@ function chooseCriteria() {
     criteria[3] = false;
   }
   console.log("Include special characters:", criteria[3]);
-  checkCriteria();
+  if (!criteria[0] && !criteria[1] && !criteria[2] && !criteria[3]) {
+    errorState[2] = true;
+  } else {
+    errorState[2] = false;
+  }
   console.log("Type selection error:", errorState[2]);
 }
 
