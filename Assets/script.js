@@ -127,6 +127,7 @@ function generatePassword() {
 
 // Write password to the #password input, resets values.
 function writePassword() {
+  console.log("PROGRAM INITIATED.");
   passwordArray = [];
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
