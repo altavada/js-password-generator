@@ -12,7 +12,7 @@ var passwordLength = 0;
 var includeLowercase = false;
 var includeUppercase = false;
 var includeNumbers = false;
-var includeCharacters = false;
+var includeCharacters = false;  
 var lengthError = false;
 var cancelState = false;
 
@@ -26,56 +26,104 @@ function roll(max) {
 
 // Character randomizer
 function typeSelector() {
-    let characterType = roll(4);
-    if (!includeLowercase && !includeUppercase && !includeNumbers && !includeCharacters) {
-        return ("Type selection error.");
-      } else if (characterType == 0 && includeLowercase) {
-        return lowercase[roll(26)];
-      } else if (characterType == 1 && includeUppercase) {
-        return uppercase[roll(26)];
-      } else if (characterType == 2 && includeNumbers) {
-        return numbers[roll(10)];
-      } else if (characterType == 3 && includeCharacters) {
-        return characters[roll(10)];
-      } else {
-        return typeSelector();
-    }
+  let characterType = roll(4);
+  if (!includeLowercase && !includeUppercase && !includeNumbers && !includeCharacters) {
+      return ("Type selection error.");
+    } else if (characterType == 0 && includeLowercase) {
+      return lowercase[roll(26)];
+    } else if (characterType == 1 && includeUppercase) {
+      return uppercase[roll(26)];
+    } else if (characterType == 2 && includeNumbers) {
+      return numbers[roll(10)];
+    } else if (characterType == 3 && includeCharacters) {
+      return characters[roll(10)];
+    } else {
+      return typeSelector();
+  }
 }
+
+// Criteria selector
+function chooseCriteria() {
+  passwordLength = window.prompt("Choose a password length from 8 to 128 characters:");
+  console.log("Password length:", passwordLength);
+  let lowercaseScreen = false;
+  if (passwordLength === null) {
+    lengthError = false;
+    cancelState = true;
+    return;
+  } else if (passwordLength >= 8 && passwordLength <= 128) {
+    lengthError = false;
+    cancelState = false;
+    lowercaseScreen = window.confirm("Include lowercase characters?");
+  } else {
+    lengthError = true;
+    cancelState = false;
+    return;
+  }
+  if (lowercaseScreen) {
+    includeLowercase = true;
+  } else {
+    includeLowercase = false;
+  }
+  console.log("Include lowercase:", includeLowercase);
+  let uppercaseScreen = window.confirm("Include uppercase characters?");
+  if (uppercaseScreen) {
+    includeUppercase = true;
+  } else {
+    includeUppercase = false;
+  }
+  console.log("Include uppercase:", includeUppercase);
+  let numberScreen = window.confirm("Include numbers?");
+  if (numberScreen) {
+    includeNumbers = true;
+  } else {
+    includeNumbers = false;
+  }
+  console.log("Include numbers:", includeNumbers);
+  let characterScreen = window.confirm("Include special characters?");
+  if (characterScreen) {
+    includeCharacters = true;
+  } else {
+    includeCharacters = false;
+  }
+  console.log("Include special characters:", includeCharacters);
+}
+
 
 // Password generator
 function generatePassword() {
-    chooseCriteria();
-    let generateScreen = false;
-    if (!includeCharacters && !includeLowercase && !includeNumbers && !includeUppercase && !lengthError && !cancelState) {
-      window.alert("Type selection error. Please choose at least one character type.");
-      return;
-    } else if (lengthError) {
-      window.alert("Invalid length input. Password length must be 8 to 128 characters.");
-      return;
-    } else if (cancelState) {
-      window.alert("Password generation cancelled.");
-      return;
-    } else {
-      generateScreen = window.confirm("Password ready. Proceed?");
+  chooseCriteria();
+  let generateScreen = false;
+  if (!includeCharacters && !includeLowercase && !includeNumbers && !includeUppercase && !lengthError && !cancelState) {
+    window.alert("Type selection error. Please choose at least one character type.");
+    return;
+  } else if (lengthError) {
+    window.alert("Invalid length input. Password length must be 8 to 128 characters.");
+    return;
+  } else if (cancelState) {
+    window.alert("Password generation cancelled.");
+    return;
+  } else {
+    generateScreen = window.confirm("Password ready. Proceed?");
+  }
+  if (!generateScreen) {
+    window.alert("Password generation cancelled.");
+    return;
+  } else {
+    for (var i = 0; i < passwordLength; i++) {
+    passwordArray.push(typeSelector());
     }
-    if (!generateScreen) {
-      window.alert("Password generation cancelled.");
-      return;
-    } else {
-      for (var i = 0; i < passwordLength; i++) {
-        passwordArray.push(typeSelector());
-      }
-      console.log("Password:", passwordArray.join(''));
-      return passwordArray.join('');
-    }
+    console.log("Password:", passwordArray.join(''));
+    return passwordArray.join('');
+  }
 }
 
 // Write password to the #password input, resets values.
 function writePassword() {
-    passwordArray = [];
-    var password = generatePassword();
-    var passwordText = document.querySelector("#password");
-    passwordText.value = password;
+  passwordArray = [];
+  var password = generatePassword();
+  var passwordText = document.querySelector("#password");
+  passwordText.value = password;
 }
   
 // Add event listener to generate button
