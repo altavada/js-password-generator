@@ -48,15 +48,20 @@ function chooseCriteria() {
   passwordLength = window.prompt("Choose a password length from 8 to 128 characters:");
   let lowercaseScreen = false;
   if (passwordLength === null) {
-    errorState = [false, false, true];
-    console.log("User cancelled.");
-    return;
+    errorState[2] = window.confirm("Are you sure you want to cancel password generation?");
+    if (errorState[2]) {
+      console.log("User cancelled.");
+      return;
+    } else {
+      errorState[2] = false;
+      chooseCriteria();
+      return;
+    }
   } else if (passwordLength >= 8 && passwordLength <= 128) {
-    errorState = [false, false, false];
     console.log("Password length:", passwordLength);
     lowercaseScreen = window.confirm("Include lowercase characters? Hit CANCEL to exclude.");
   } else {
-    errorState = [false, true, false];
+    errorState[1] = true;
     console.log("Invalid input.");
     return;
   }
@@ -97,8 +102,24 @@ function chooseCriteria() {
 
 // Password generator
 function generatePassword() {
-  chooseCriteria();
   let generateScreen = false;
+  function finalConfirm () {
+    generateScreen = window.confirm("Password ready. Proceed?");
+    if (!generateScreen) {
+      errorState[2] = window.confirm("Are you sure you want to cancel password generation?");
+      if (errorState[2]) {
+        console.log("User cancelled.");
+        window.alert("Password generation cancelled.");
+        return;
+      } else {
+        errorState[2] = false;
+        finalConfirm();
+      }
+    } else {
+      return;
+    }
+  }
+  chooseCriteria();
   if (errorState[0]) {
     window.alert("Type selection error. Please choose at least one character type.");
     return;
@@ -109,13 +130,9 @@ function generatePassword() {
     window.alert("Password generation cancelled.");
     return;
   } else {
-    generateScreen = window.confirm("Password ready. Proceed?");
+    finalConfirm();
   }
-  if (!generateScreen) {
-    console.log("User cancelled.");
-    window.alert("Password generation cancelled.");
-    return;
-  } else {
+  if (generateScreen) {
     for (var i = 0; i < passwordLength; i++) {
       passwordArray.push(randomKey());
       console.log(passwordArray[i]);
@@ -128,6 +145,8 @@ function generatePassword() {
 // Write password to the #password input, resets values.
 function writePassword() {
   console.log("PROGRAM INITIATED.");
+  criteria = [false, false, false, false];
+  errorState = [false, false, false];
   passwordArray = [];
   var password = generatePassword();
   var passwordText = document.querySelector("#password");
